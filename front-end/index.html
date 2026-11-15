@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holocron · Registro de Missões</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="stars" aria-hidden="true"></div>
+<div class="stars stars-2" aria-hidden="true"></div>
+<main class="container">
+
+    <header class="header">
+        <div class="brand">
+            <span class="brand-pin" aria-hidden="true">🛰️</span>
+            <div>
+                <h1>Holocron</h1>
+                <p>Uma galáxia muito, muito distante... e seus lembretes por aqui.</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button id="btnImprimir" class="btn btn-ghost" type="button">🖨️ Relatório PDF</button>
+            <button id="btnNovo" class="btn btn-primary" type="button">⚔️ Nova missão</button>
+        </div>
+    </header>
+
+    <!-- FORMULÁRIO -->
+    <section id="formulario" class="card note hidden" aria-live="polite">
+        <h2 id="tituloFormulario">Novo lembrete</h2>
+        <form id="formLembrete" novalidate>
+            <input type="hidden" id="lembreteId">
+            <div class="field">
+                <label for="descricao">Descrição <span class="req">*</span></label>
+                <textarea id="descricao" rows="3" maxlength="500" placeholder="Que a Força lembre você de..."></textarea>
+                <div class="field-foot">
+                    <span id="erroDescricao" class="error-text" role="alert"></span>
+                    <span id="contador" class="counter">0/500</span>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="btnCancelar" class="btn btn-ghost">Cancelar</button>
+                <button type="submit" id="btnSalvar" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- FILTROS -->
+    <section class="card">
+        <div class="card-title">
+            <h2>📡 Radar de busca</h2>
+            <button id="btnLimpar" class="link-btn" type="button">Limpar filtros</button>
+        </div>
+
+        <div class="filtros">
+            <div class="field span-2">
+                <label for="filtroDescricao">Descrição</label>
+                <input type="text" id="filtroDescricao" placeholder="Buscar por trecho do texto...">
+            </div>
+
+            <div class="field">
+                <label for="tamanhoPagina">Registros por página</label>
+                <select id="tamanhoPagina">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+
+            <fieldset class="range span-2">
+                <legend>Data de cadastro</legend>
+                <div class="range-inputs">
+                    <div class="field">
+                        <label for="cadastroInicial">De</label>
+                        <input type="date" id="cadastroInicial">
+                    </div>
+                    <div class="field">
+                        <label for="cadastroFinal">Até</label>
+                        <input type="date" id="cadastroFinal">
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="range span-2">
+                <legend>Data de atualização</legend>
+                <div class="range-inputs">
+                    <div class="field">
+                        <label for="atualizacaoInicial">De</label>
+                        <input type="date" id="atualizacaoInicial">
+                    </div>
+                    <div class="field">
+                        <label for="atualizacaoFinal">Até</label>
+                        <input type="date" id="atualizacaoFinal">
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="field filtro-btn">
+                <button id="btnFiltrar" class="btn btn-primary" type="button">Escanear</button>
+            </div>
+        </div>
+        <p id="erroFiltro" class="error-text" role="alert"></p>
+    </section>
+
+    <!-- LISTAGEM -->
+    <section class="card">
+        <div class="card-title">
+            <h2>📜 Registro de lembretes</h2>
+            <span id="totalRegistros" class="pill">0 registros</span>
+        </div>
+
+        <div id="alertaApi" class="banner hidden" role="alert">
+            <span>⚠️ Não foi possível se comunicar com a API. Verifique se ela está rodando e se o banco (Docker) está de pé.</span>
+            <button id="btnTentar" class="btn btn-ghost btn-sm" type="button">Tentar novamente</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="sortable" data-campo="Descricao" tabindex="0" aria-sort="none">Descrição <span class="seta"></span></th>
+                        <th class="sortable" data-campo="DataCadastro" tabindex="0" aria-sort="none">Cadastro <span class="seta"></span></th>
+                        <th class="sortable" data-campo="DataAtualizacao" tabindex="0" aria-sort="none">Atualização <span class="seta"></span></th>
+                        <th>Status</th>
+                        <th class="col-acoes">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="listaLembretes"></tbody>
+            </table>
+
+            <div id="carregando" class="empty hidden">Carregando...</div>
+            <div id="mensagemVazia" class="empty hidden">
+                <div class="empty-icon">🌌</div>
+                Nenhum lembrete encontrado neste setor da galáxia.
+            </div>
+        </div>
+
+        <nav class="pagination" aria-label="Paginação">
+            <button id="btnPrimeira" class="btn btn-ghost btn-sm" type="button" title="Primeira">«</button>
+            <button id="btnAnterior" class="btn btn-ghost btn-sm" type="button">‹ Anterior</button>
+            <span id="paginaAtual" class="pagina-info">Página 1 de 1</span>
+            <button id="btnProximo" class="btn btn-ghost btn-sm" type="button">Próxima ›</button>
+            <button id="btnUltima" class="btn btn-ghost btn-sm" type="button" title="Última">»</button>
+        </nav>
+    </section>
+</main>
+
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<script src="js/app.js"></script>
+</body>
+</html>

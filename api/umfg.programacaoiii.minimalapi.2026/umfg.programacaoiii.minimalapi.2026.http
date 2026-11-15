@@ -1,0 +1,25 @@
+@host = http://localhost:5207
+
+### GET - lista todos
+GET {{host}}/lembretes
+
+### POST - cadastrar
+POST {{host}}/lembretes
+Content-Type: application/json
+
+{ "descricao": "Estudar para a prova" }
+
+### GET por ID (troque pelo id retornado)
+GET {{host}}/lembretes/00000000-0000-0000-0000-000000000000
+
+### PUT - atualizar
+PUT {{host}}/lembretes/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{ "descricao": "Descricao atualizada" }
+
+### DELETE
+DELETE {{host}}/lembretes/00000000-0000-0000-0000-000000000000
+
+### GET com filtros, paginacao e ordenacao
+GET {{host}}/lembretes/filtro?NumeroPagina=1&TamanhoPagina=5&Ordem=Descricao&Direcao=ASC&Descricao=estudar&DataCadastroInicial=2026-01-01&DataCadastroFinal=2026-12-31
