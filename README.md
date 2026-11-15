@@ -14,9 +14,6 @@ docs/ETAPAS.md       Relatório das etapas 1, 2, 3, 7 e 9
 1. `docker compose up -d --build`   (sobe MySQL + API em http://localhost:5207)
 2. Abra `front-end/index.html` (ou use o Live Server do VS Code)
 
-
-**3. Front-end** — abra `front-end/index.html` (ou use a extensão *Live Server* do VS Code).
-
 ## Correções feitas na API (bugs do código original)
 | Problema | Efeito | Correção |
 |---|---|---|
@@ -27,6 +24,8 @@ docs/ETAPAS.md       Relatório das etapas 1, 2, 3, 7 e 9
 | PUT/DELETE em registro inativo | Alterava registro "excluído" | Retorna 404 |
 | `UseHttpsRedirection` em dev | Redirect quebra o preflight do CORS no front em `http` | Só fora do ambiente Development |
 | `.http` com `weatherforecast` | Arquivo de teste não correspondia à API | Reescrito com os endpoints reais |
+| `string` e `DateTime` não anuláveis em `LembreteQueryRequestDTO` | No .NET 8, `[AsParameters]` os trata como obrigatórios: `/lembretes/filtro` retornava 400 se faltasse `Ordem`, `Direcao`, `Descricao` ou qualquer data | Propriedades `string?` e `DateTime?`, com `HasValue` nos filtros |
+| `Guid.Parse` direto no PUT/DELETE | Erro 500 com ID inválido | `Guid.TryParse` → 400 |
 
 ## Publicar no GitHub (etapa 10)
 ```bash
