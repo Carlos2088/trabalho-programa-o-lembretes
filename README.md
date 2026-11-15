@@ -11,21 +11,9 @@ docs/ETAPAS.md       Relatório das etapas 1, 2, 3, 7 e 9
 
 ## Como executar
 
-**1. Banco (Docker)**
-```bash
-docker compose up -d
-```
-Sobe o MySQL 8 na porta `3306` (usuário `root`, senha `root`, banco `umfg_lembrete_develop`),
-igual ao `appsettings.Development.json`. As migrations rodam sozinhas quando a API inicia.
-> Se já tem MySQL local na 3306, mude a porta no compose (ex.: `"3308:3306"`) e use o perfil `umfg`
-> (`dotnet run --launch-profile umfg`), que aponta para a 3308.
+1. `docker compose up -d --build`   (sobe MySQL + API em http://localhost:5207)
+2. Abra `front-end/index.html` (ou use o Live Server do VS Code)
 
-**2. API**
-```bash
-cd api/umfg.programacaoiii.minimalapi.2026
-dotnet run --launch-profile http
-```
-API em `http://localhost:5207`.
 
 **3. Front-end** — abra `front-end/index.html` (ou use a extensão *Live Server* do VS Code).
 
